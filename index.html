@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>IRON//PROTOCOL — Fitness RPG</title>
+<style>
+:root{
+  --bg:#08090b;--panel:#111318;--panel2:#171a20;--line:#292e38;
+  --text:#e9edf2;--muted:#8e97a5;--accent:#d9ff3f;--danger:#ff4655;
+  --orange:#ff9b38;--blue:#57a8ff;--shadow:0 18px 60px #0008;
+}
+*{box-sizing:border-box}html,body{margin:0;background:radial-gradient(circle at 50% -10%,#20252d 0,#08090b 45%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}
+.app{min-height:100vh}.top{height:72px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;background:#08090bf2;backdrop-filter:blur(14px);z-index:20}
+.logo{font-weight:900;letter-spacing:.12em}.logo span{color:var(--accent)}.status{display:flex;gap:12px;align-items:center;font-size:12px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent)}
+.layout{display:grid;grid-template-columns:230px 1fr;max-width:1500px;margin:auto}
+aside{border-right:1px solid var(--line);min-height:calc(100vh - 72px);padding:18px 12px;position:sticky;top:72px;height:calc(100vh - 72px)}
+nav button{width:100%;background:none;border:0;color:var(--muted);padding:13px 14px;text-align:left;border-radius:8px;margin-bottom:4px}
+nav button:hover,nav button.active{background:#1a1e25;color:#fff}
+main{padding:28px;min-width:0}.screen{display:none}.screen.active{display:block}
+.hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:22px}.eyebrow{font-size:11px;color:var(--accent);letter-spacing:.16em;font-weight:800}.hero h1{font-size:34px;margin:6px 0}.hero p{color:var(--muted);margin:0}
+.grid{display:grid;gap:14px}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.card{background:linear-gradient(145deg,#14171d,#0f1115);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
+.kpi{min-height:116px}.kpi .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.kpi .num{font-size:31px;font-weight:900;margin-top:10px}.kpi small{color:var(--muted)}
+.bar{height:8px;background:#252a33;border-radius:20px;overflow:hidden}.fill{height:100%;background:var(--accent);width:0;transition:width .4s}
+.rank{font-weight:900;font-size:22px}.rank em{color:var(--accent);font-style:normal}
+.btn{border:1px solid var(--line);background:#191d24;color:#fff;padding:11px 14px;border-radius:8px;font-weight:800}.btn:hover{filter:brightness(1.15)}.btn.primary{background:var(--accent);color:#0a0c0d;border-color:var(--accent)}.btn.danger{background:#351419;color:#ff7781;border-color:#64232c}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.space{justify-content:space-between}
+input,select{width:100%;background:#0b0d11;color:#fff;border:1px solid var(--line);border-radius:8px;padding:11px;outline:none}input:focus,select:focus{border-color:#66717f}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}.field{margin-bottom:14px}
+.mode{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mode button{padding:18px;border:1px solid var(--line);background:#101319;color:#c5cbd4;border-radius:10px;text-align:left}.mode button.selected{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset;background:#151b11}.mode strong{display:block;color:#fff;font-size:16px;margin-bottom:5px}.mode span{font-size:12px;color:var(--muted)}
+.exercise{display:grid;grid-template-columns:150px 1fr auto;gap:16px;align-items:center;border-top:1px solid var(--line);padding:15px 0}.exercise:first-child{border-top:0}.thumb{width:150px;height:100px;object-fit:cover;border-radius:8px;background:#0a0c0f}.exercise h3{margin:0 0 6px;font-size:16px}.exercise p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}.tag{display:inline-block;font-size:10px;padding:4px 7px;border:1px solid var(--line);border-radius:99px;color:#b7c0cc;margin:4px 4px 0 0}
+.timer{font-size:52px;font-weight:900;letter-spacing:.04em;text-align:center;margin:18px}.complete{border-color:#5e7130;background:#121a0d}
+.toast{position:fixed;right:20px;bottom:20px;background:#e9edf2;color:#08090b;padding:13px 16px;border-radius:8px;font-weight:800;display:none;z-index:50}
+.modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;z-index:40;padding:18px}.modal.open{display:flex}.modalbox{width:min(620px,100%);background:#101319;border:1px solid var(--line);border-radius:14px;padding:22px}
+.ranktable{width:100%;border-collapse:collapse}.ranktable td{padding:12px;border-bottom:1px solid var(--line)}.ranktable td:last-child{text-align:right;font-weight:800}
+.notice{font-size:12px;color:#9ba4b1;line-height:1.5;background:#0d1014;border:1px solid var(--line);padding:12px;border-radius:8px}
+.empty{text-align:center;color:var(--muted);padding:30px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}aside{position:static;height:auto;min-height:auto;border-right:0;border-bottom:1px solid var(--line)}nav{display:grid;grid-template-columns:repeat(4,1fr)}nav button{font-size:11px;text-align:center}.g4{grid-template-columns:1fr 1fr}.g3,.g2{grid-template-columns:1fr}main{padding:18px}.exercise{grid-template-columns:90px 1fr}.exercise .actions{grid-column:2}.thumb{width:90px;height:75px}.hero{display:block}.hero .row{margin-top:12px}}
+@media(max-width:520px){.g4{grid-template-columns:1fr}.top{padding:0 14px}.status{display:none}.mode{grid-template-columns:1fr}}
+</style>
+
+<style>
+html,body{width:100%;min-width:0;overflow-x:hidden;-webkit-text-size-adjust:100%}
+body{min-height:100svh}
+.top{height:58px;padding:0 14px;position:sticky;top:0}
+.logo{font-size:14px}
+.layout{display:block;width:100%;max-width:none}
+aside{position:sticky;top:58px;z-index:19;height:auto;min-height:0;padding:6px;border-right:0;border-bottom:1px solid var(--line);background:#08090bf5}
+nav{display:flex;overflow-x:auto;gap:5px;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:0 0 auto;width:auto;margin:0;padding:9px 11px;font-size:11px;white-space:nowrap}
+main{padding:14px;width:100%;max-width:none}
+.hero{display:block;margin-bottom:14px}
+.hero h1{font-size:26px;line-height:1.05}
+.hero .row{margin-top:12px}
+.grid.g4,.grid.g3,.grid.g2{grid-template-columns:1fr}
+.card{padding:15px;border-radius:10px}
+.kpi{min-height:90px}
+.kpi .num{font-size:27px}
+.exercise{grid-template-columns:82px minmax(0,1fr);gap:11px}
+.thumb{width:82px;height:82px}
+.exercise .actions{grid-column:2}
+.exercise .actions .btn{width:100%}
+.mode{grid-template-columns:1fr}
+.timer{font-size:43px}
+.modal{padding:10px}
+.modalbox{padding:16px;max-height:90svh;overflow:auto}
+input,select,.btn{min-height:44px}
+.ranktable{font-size:12px}
+.ranktable td{padding:10px 5px}
+.notice{font-size:11px}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="logo">IRON<span>//</span>PROTOCOL</div>
+  <div class="status"><span class="dot"></span><span id="saveStatus">LOCAL PROFILE ONLINE</span></div>
+</header>
+<div class="layout">
+<aside>
+<nav>
+<button data-screen="dashboard" class="active">◈ Dashboard</button>
+<button data-screen="workout">▶ Treino</button>
+<button data-screen="progress">↗ Progressão</button>
+<button data-screen="ranking">♜ Ranking</button>
+<button data-screen="profile">⚙ Perfil</button>
+</nav>
+</aside>
+<main>
+
+<section id="dashboard" class="screen active">
+<div class="hero"><div><div class="eyebrow">SYSTEM // ACTIVE</div><h1 id="dashTitle">Inicie seu protocolo.</h1><p id="dashSub">Configure seu perfil para gerar o primeiro treino.</p></div><button class="btn primary" onclick="go('workout')">▶ INICIAR SESSÃO</button></div>
+<div class="grid g4">
+<div class="card kpi"><div class="label">Rank</div><div class="num rank" id="rank">T0 <em>L0</em></div><small id="rankXp">0 / 100 XP</small></div>
+<div class="card kpi"><div class="label">Streak</div><div class="num" id="streak">0</div><small>dias consecutivos</small></div>
+<div class="card kpi"><div class="label">Sessões</div><div class="num" id="sessions">0</div><small>treinos concluídos</small></div>
+<div class="card kpi"><div class="label">Peso</div><div class="num" id="weightKpi">—</div><small>kg registrados</small></div>
+</div>
+<div style="height:14px"></div>
+<div class="grid g2">
+<div class="card"><div class="row space"><strong>Progressão</strong><span id="nextRank">Próximo nível</span></div><div style="height:14px"></div><div class="bar"><div class="fill" id="xpBar"></div></div><div style="height:10px"></div><div class="row space" style="font-size:12px;color:var(--muted)"><span id="tierLabel">Tier 0</span><span id="xpText">0 / 100 XP</span></div></div>
+<div class="card"><strong>Missão diária</strong><div style="height:10px"></div><div id="dailyMission" class="notice">Complete uma sessão para receber sua primeira missão.</div><div style="height:12px"></div><button class="btn" onclick="go('workout')">Abrir missão</button></div>
+</div>
+<div style="height:14px"></div>
+<div class="card"><strong>Protocolo do dia</strong><div style="height:10px"></div><div id="todayPreview" class="empty">Configure seu perfil para montar o protocolo.</div></div>
+</section>
+
+<section id="workout" class="screen">
+<div class="hero"><div><div class="eyebrow">SESSION // GENERATED</div><h1>Treino de hoje</h1><p id="workoutMeta">—</p></div><div class="row"><button class="btn" onclick="regenerate()">↻ REGERAR</button><button class="btn primary" onclick="startSession()">▶ PLAY</button></div></div>
+<div id="workoutList" class="card"></div>
+<div style="height:14px"></div>
+<div class="card"><strong>Regras de execução</strong><div style="height:10px"></div><div class="notice">A carga deve permitir técnica consistente. Pare diante de dor aguda, tontura, falta de ar incomum ou outro sinal preocupante. Este protocolo é um sistema de treino, não uma avaliação médica.</div></div>
+</section>
+
+<section id="progress" class="screen">
+<div class="hero"><div><div class="eyebrow">DATA // PROGRESSION</div><h1>Progressão</h1><p>Seu histórico e evolução.</p></div></div>
+<div class="grid g3">
+<div class="card"><div class="label">XP total</div><div class="num" id="totalXp">0</div></div>
+<div class="card"><div class="label">Volume estimado</div><div class="num" id="volume">0</div><small>kg × reps registrados</small></div>
+<div class="card"><div class="label">Melhor streak</div><div class="num" id="bestStreak">0</div></div>
+</div>
+<div style="height:14px"></div>
+<div class="card"><strong>Histórico</strong><div style="height:10px"></div><div id="history"></div></div>
+</section>
+
+<section id="ranking" class="screen">
+<div class="hero"><div><div class="eyebrow">LEADERBOARD // GLOBAL</div><h1>Ranking</h1><p>Posição baseada em XP e sessões. Os nomes abaixo são dados demonstrativos.</p></div></div>
+<div class="card"><table class="ranktable"><tbody id="rankTable"></tbody></table></div>
+</section>
+
+<section id="profile" class="screen">
+<div class="hero"><div><div class="eyebrow">CONFIG // USER</div><h1>Perfil</h1><p>Quanto mais dados, melhor a geração do protocolo.</p></div></div>
+<div class="grid g2">
+<div class="card">
+<div class="field"><label>Nome / codinome</label><input id="name" maxlength="24" placeholder="Ex.: VOROBEY"></div>
+<div class="grid g2">
+<div class="field"><label>Idade</label><input id="age" type="number" min="13" max="100" placeholder="19"></div>
+<div class="field"><label>Gênero/sexo para cálculo</label><select id="sex"><option value="male">Masculino</option><option value="female">Feminino</option><option value="other">Outro / não informar</option></select></div>
+</div>
+<div class="grid g2">
+<div class="field"><label>Altura (cm)</label><input id="height" type="number" min="120" max="230" placeholder="180"></div>
+<div class="field"><label>Peso (kg)</label><input id="weight" type="number" min="30" max="300" step=".1" placeholder="75"></div>
+</div>
+<div class="field"><label>Nível atual</label><select id="experience"><option value="beginner">Iniciante</option><option value="intermediate">Intermediário</option><option value="advanced">Avançado</option></select></div>
+<div class="field"><label>Objetivo principal</label><select id="goal"><option value="strength">Força</option><option value="hypertrophy">Hipertrofia</option><option value="conditioning">Condicionamento</option><option value="general">Geral</option></select></div>
+<div class="field"><label>Treinos por semana</label><input id="days" type="number" min="1" max="7" value="4"></div>
+<div class="field"><label>Tempo por sessão (min)</label><input id="minutes" type="number" min="15" max="180" value="60"></div>
+<button class="btn primary" onclick="saveProfile()">SALVAR E GERAR</button>
+</div>
+<div class="card">
+<strong>Modo de treinamento</strong><div style="height:12px"></div>
+<div class="mode"><button id="modeCal" onclick="setMode('calisthenics')"><strong>CALISTENIA</strong><span>Casa, peso corporal, mochila e improvisos controlados.</span></button><button id="modeGym" onclick="setMode('gym')"><strong>ACADEMIA</strong><span>Musculação, máquinas, cabos, barras e halteres.</span></button></div>
+<div style="height:18px"></div><strong>Limitações / equipamento</strong><div style="height:8px"></div>
+<div class="field"><label>Equipamento disponível</label><input id="equipment" placeholder="Ex.: mochila, barra fixa, halteres"></div>
+<div class="field"><label>Restrições</label><input id="limitations" placeholder="Ex.: sem corrida, joelho sensível"></div>
+<div class="notice">Os dados ficam salvos localmente neste navegador. Para um produto real, autenticação, banco, criptografia, sincronização e validação no servidor devem ser adicionados.</div>
+<div style="height:12px"></div><button class="btn danger" onclick="resetApp()">APAGAR PROGRESSO LOCAL</button>
+</div>
+</div>
+</section>
+
+</main></div></div>
+<div id="toast" class="toast"></div>
+<div id="sessionModal" class="modal"><div class="modalbox">
+<div class="row space"><strong id="sessionTitle">SESSION</strong><button class="btn" onclick="closeSession()">×</button></div>
+<div class="timer" id="timer">00:00</div>
+<div id="activeExercise" class="notice">Preparando...</div>
+<div style="height:12px"></div>
+<div class="row"><button class="btn" onclick="skipExercise()">PULAR</button><button class="btn primary" onclick="finishExercise()">CONCLUIR EXERCÍCIO</button></div>
+</div></div>
+
+<script>
+const API='https://exercise-database.zenithfits.com/api/v1/exercises';
+const FALLBACK='https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=700&q=80';
+let state=JSON.parse(localStorage.getItem('iron_protocol')||'null')||{
+ profile:{name:'',age:19,sex:'male',height:180,weight:75,experience:'beginner',goal:'general',days:4,minutes:60,equipment:'',limitations:''},
+ mode:'calisthenics',xp:0,tier:0,level:0,streak:0,bestStreak:0,sessions:0,volume:0,history:[],workout:null
+};
+let timerInt=null, sessionIndex=0, sessionRunning=false;
+
+const catalog=[
+ {name:'Push-up',pt:'Flexão de braço',body:'chest',cal:'push-up',gym:'bench press',sets:3,reps:'8–15',rest:75,equip:'bodyweight'},
+ {name:'Bodyweight Squat',pt:'Agachamento',body:'legs',cal:'squat',gym:'leg press',sets:3,reps:'10–15',rest:75,equip:'bodyweight'},
+ {name:'Backpack Row',pt:'Remada com mochila',body:'back',cal:'row',gym:'seated cable row',sets:3,reps:'8–12',rest:90,equip:'backpack'},
+ {name:'Pike Push-up',pt:'Flexão pike',body:'shoulders',cal:'pike push up',gym:'shoulder press',sets:3,reps:'6–12',rest:90,equip:'bodyweight'},
+ {name:'Split Squat',pt:'Agachamento unilateral',body:'legs',cal:'split squat',gym:'bulgarian split squat',sets:3,reps:'8–12/cada',rest:90,equip:'bodyweight'},
+ {name:'Plank',pt:'Prancha',body:'core',cal:'plank',gym:'cable crunch',sets:3,reps:'30–60s',rest:60,equip:'bodyweight'},
+ {name:'Glute Bridge',pt:'Ponte de glúteos',body:'legs',cal:'glute bridge',gym:'hip thrust',sets:3,reps:'10–15',rest:75,equip:'bodyweight'},
+ {name:'Inverted Row',pt:'Remada invertida',body:'back',cal:'inverted row',gym:'lat pulldown',sets:3,reps:'6–12',rest:90,equip:'bar'},
+ {name:'Calf Raise',pt:'Elevação de panturrilha',body:'calves',cal:'calf raise',gym:'calf raise',sets:3,reps:'12–20',rest:60,equip:'bodyweight'},
+ {name:'Burpee',pt:'Burpee',body:'cardio',cal:'burpee',gym:'rowing machine',sets:2,reps:'8–12',rest:90,equip:'bodyweight'}
+];
+
+function persist(){localStorage.setItem('iron_protocol',JSON.stringify(state));document.getElementById('saveStatus').textContent='LOCAL PROFILE SAVED';}
+function toast(t){let e=document.getElementById('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2200)}
+function go(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.screen===id));renderAll();}
+
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.screen));
+function setMode(m){state.mode=m;document.getElementById('modeCal').classList.toggle('selected',m==='calisthenics');document.getElementById('modeGym').classList.toggle('selected',m==='gym');persist();generateWorkout();}
+function readProfile(){
+ ['name','age','sex','height','weight','experience','goal','days','minutes','equipment','limitations'].forEach(k=>{let e=document.getElementById(k);if(e) state.profile[k]=e.value});
+ ['age','height','weight','days','minutes'].forEach(k=>state.profile[k]=Number(state.profile[k])||0);
+}
+function fillProfile(){for(const k in state.profile){let e=document.getElementById(k);if(e)e.value=state.profile[k]}document.getElementById('modeCal').classList.toggle('selected',state.mode==='calisthenics');document.getElementById('modeGym').classList.toggle('selected',state.mode==='gym')}
+function saveProfile(){readProfile();if(state.profile.age<13||state.profile.age>100||state.profile.height<120||state.profile.weight<30){toast('Verifique idade, altura e peso.');return}generateWorkout();persist();toast('Protocolo atualizado.');go('dashboard')}
+
+function xpNeeded(level){return 100+level*25}
+function addXP(n){
+ state.xp+=n;
+ while(state.level<10 && state.xp>=xpNeeded(state.level)){state.xp-=xpNeeded(state.level);state.level++;toast(`LEVEL UP — TIER ${state.tier} / LEVEL ${state.level}`)}
+ if(state.level>=10 && state.tier<9){state.level=0;state.tier++;state.xp=0;toast(`TIER UP — TIER ${state.tier}`)}
+ if(state.tier===9&&state.level===10)state.xp=0;
+ persist();renderAll();
+}
+function rankString(){return `T${state.tier} <em>L${state.level}</em>`}
+function bmi(){let p=state.profile;return p.height&&p.weight?(p.weight/((p.height/100)**2)).toFixed(1):'—'}
+function difficultyFactor(){return {beginner:.85,intermediate:1,advanced:1.15}[state.profile.experience]||1}
+function goalReps(base){let g=state.profile.goal;if(g==='strength')return '5–8';if(g==='hypertrophy')return '8–12';if(g==='conditioning')return '12–20';return base}
+function generateWorkout(){
+ let exp=state.profile.experience, mode=state.mode, limit=(state.profile.limitations||'').toLowerCase();
+ let list=catalog.filter(x=>{
+   if(mode==='calisthenics' && ['bench press','leg press','seated cable row','shoulder press','lat pulldown','hip thrust','cable crunch','rowing machine'].includes(x.gym)) return false;
+   if(limit.includes('joelho') && ['legs','cardio'].includes(x.body)) return false;
+   if(limit.includes('ombro') && x.body==='shoulders') return false;
+   if(limit.includes('corrida') && x.body==='cardio') return false;
+   return true;
+ });
+ let seed=(new Date()).getDate()+state.sessions*7;
+ list=list.sort((a,b)=>((seed+a.name.length*13)%17)-((seed+b.name.length*13)%17)).slice(0, state.profile.minutes<35?4:state.profile.minutes<55?5:6);
+ list=list.map((x,i)=>({...x,sets:exp==='beginner'?Math.min(x.sets,2):x.sets,reps:goalReps(x.reps),image:null}));
+ state.workout={date:new Date().toISOString().slice(0,10),list,mode};
+ persist();renderWorkout();
+ fetchImages(list);
+}
+async function fetchImages(list){
+ try{
+   let r=await fetch(API+'?limit=100'); if(!r.ok)throw Error();
+   let j=await r.json();let arr=j.data||[];
+   for(let x of list){
+     let hit=arr.find(a=>(a.name||'').toLowerCase().includes(x.name.toLowerCase())||(a.name||'').toLowerCase().includes(x.cal.split(' ')[0]));
+     if(hit)x.image=(hit.thumbnails?.male||hit.thumbnails?.female||hit.thumbnail||hit.image||null);
+   }
+   persist();renderWorkout();
+ }catch(e){/* offline/failure-safe: fallback remains */ renderWorkout();}
+}
+function renderWorkout(){
+ if(!state.workout){generateWorkout();return}
+ let p=state.profile,w=state.workout;
+ document.getElementById('workoutMeta').textContent=`${w.mode==='calisthenics'?'CALISTENIA':'ACADEMIA'} · ${p.minutes} MIN · ${p.goal.toUpperCase()} · BMI ${bmi()}`;
+ document.getElementById('workoutList').innerHTML=w.list.map((x,i)=>`
+ <div class="exercise">
+  <img class="thumb" src="${x.image||FALLBACK}" onerror="this.src='${FALLBACK}'" alt="${x.pt}">
+  <div><h3>${i+1}. ${x.pt}</h3><p>${description(x)}</p><span class="tag">${x.sets} séries</span><span class="tag">${x.reps}</span><span class="tag">${x.rest}s descanso</span></div>
+  <div class="actions"><button class="btn" onclick="showExercise(${i})">DETALHES</button></div>
+ </div>`).join('');
+}
+function description(x){
+ if(x.pt==='Flexão de braço')return 'Mãos firmes, corpo alinhado e descida controlada. Empurre o chão mantendo o tronco estável.';
+ if(x.pt==='Agachamento')return 'Pés estáveis, joelhos acompanhando a linha dos pés e tronco controlado durante todo o movimento.';
+ if(x.pt==='Remada com mochila')return 'Incline o tronco com coluna neutra e puxe a carga em direção ao quadril sem arrancar.';
+ if(x.pt==='Flexão pike')return 'Quadril elevado, cabeça entre os braços e descida controlada. Não force a amplitude.';
+ if(x.pt==='Prancha')return 'Contraia abdômen e glúteos, mantendo cabeça, tronco e quadril alinhados.';
+ return 'Execute com amplitude confortável, controle a fase de descida e priorize técnica sobre velocidade.';
+}
+function showExercise(i){let x=state.workout.list[i];document.getElementById('sessionTitle').textContent=x.pt;document.getElementById('activeExercise').innerHTML=`<strong>${x.sets} séries × ${x.reps}</strong><br>${description(x)}<br><br><span class="tag">Descanso: ${x.rest}s</span>`;document.getElementById('sessionModal').classList.add('open')}
+function startSession(){if(!state.workout){generateWorkout();return}sessionIndex=0;sessionRunning=true;showExercise(0);startTimer(0)}
+function startTimer(seconds){clearInterval(timerInt);let left=seconds;document.getElementById('timer').textContent=format(left);if(!seconds)return;timerInt=setInterval(()=>{left--;document.getElementById('timer').textContent=format(left);if(left<=0){clearInterval(timerInt);toast('DESCANSO ENCERRADO')}} ,1000)}
+function format(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.max(0,s%60)).padStart(2,'0')}
+function finishExercise(){if(!state.workout)return;let x=state.workout.list[sessionIndex];state.volume+=(Number((state.profile.weight||0))*x.sets*Math.max(1,parseInt(String(x.reps).match(/\d+/)?.[0]||1)));if(sessionIndex<state.workout.list.length-1){sessionIndex++;showExercise(sessionIndex);startTimer(0);return}completeWorkout()}
+function skipExercise(){if(sessionIndex<state.workout.list.length-1){sessionIndex++;showExercise(sessionIndex)}else completeWorkout()}
+function completeWorkout(){clearInterval(timerInt);closeSession();state.sessions++;state.streak++;state.bestStreak=Math.max(state.bestStreak,state.streak);state.history.unshift({date:new Date().toLocaleDateString('pt-BR'),mode:state.mode,exercises:state.workout.list.length,xp:50+state.workout.list.length*10});state.history=state.history.slice(0,20);addXP(50+state.workout.list.length*10);toast('SESSÃO CONCLUÍDA — XP ADICIONADO');generateWorkout()}
+function closeSession(){document.getElementById('sessionModal').classList.remove('open');clearInterval(timerInt)}
+function regenerate(){generateWorkout();toast('Novo protocolo gerado.')}
+function renderAll(){
+ fillProfile();
+ document.getElementById('rank').innerHTML=rankString();
+ document.getElementById('rankXp').textContent=`${state.xp} / ${xpNeeded(state.level)} XP`;
+ document.getElementById('xpText').textContent=`${state.xp} / ${xpNeeded(state.level)} XP`;
+ document.getElementById('xpBar').style.width=(state.tier===9&&state.level===10?100:(state.xp/xpNeeded(state.level))*100)+'%';
+ document.getElementById('tierLabel').textContent=`Tier ${state.tier}`;
+ document.getElementById('nextRank').textContent=state.level===10?'Próximo Tier':'Próximo Level';
+ document.getElementById('streak').textContent=state.streak;document.getElementById('sessions').textContent=state.sessions;document.getElementById('weightKpi').textContent=state.profile.weight?state.profile.weight+' kg':'—';
+ document.getElementById('totalXp').textContent=(state.tier*1000+state.level*100+state.xp).toLocaleString('pt-BR');document.getElementById('volume').textContent=Math.round(state.volume).toLocaleString('pt-BR');document.getElementById('bestStreak').textContent=state.bestStreak;
+ document.getElementById('dashTitle').textContent=state.profile.name?`Operador ${state.profile.name}`:'Inicie seu protocolo.';
+ document.getElementById('dashSub').textContent=state.profile.name?`${state.mode==='calisthenics'?'Calistenia':'Academia'} · ${state.profile.goal} · ${state.profile.experience}`:'Configure seu perfil para gerar o primeiro treino.';
+ document.getElementById('dailyMission').textContent=state.sessions?`Complete a sessão de hoje para ganhar XP. Streak atual: ${state.streak}.`:'Complete a primeira sessão para ativar seu streak.';
+ document.getElementById('todayPreview').innerHTML=state.workout?state.workout.list.map(x=>`<span class="tag">${x.pt} · ${x.sets}×${x.reps}</span>`).join(' '):'Configure seu perfil para montar o protocolo.';
+ document.getElementById('history').innerHTML=state.history.length?state.history.map(h=>`<div class="row space" style="padding:12px 0;border-bottom:1px solid var(--line)"><span>${h.date} · ${h.mode==='calisthenics'?'Calistenia':'Academia'} · ${h.exercises} exercícios</span><strong>+${h.xp} XP</strong></div>`).join(''):'<div class="empty">Nenhuma sessão concluída.</div>';
+ let demo=['NIGHT//RUNNER','IRON//ZERO','VOID//LIFTER','KRAKEN','BLACK//CORE','SENTINEL','VORTEX','RAVEN'];
+ let rows=demo.map((n,i)=>({n,xp:9400-i*700,t:`T${Math.min(9,9-Math.floor(i/2))}`,l:Math.max(0,10-i%7)}));
+ rows.push({n:state.profile.name||'VOCÊ',xp:state.tier*1000+state.level*100+state.xp,t:`T${state.tier}`,l:state.level});
+ rows.sort((a,b)=>b.xp-a.xp);document.getElementById('rankTable').innerHTML=rows.map((r,i)=>`<tr><td>#${i+1}</td><td>${r.n}</td><td>${r.t} / L${r.l}</td><td>${r.xp.toLocaleString('pt-BR')} XP</td></tr>`).join('');
+ renderWorkout();
+}
+function resetApp(){if(confirm('Apagar todo o progresso local?')){localStorage.removeItem('iron_protocol');location.reload()}}
+if(!state.workout)generateWorkout();else renderAll();
+</script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));}</script></body>
+</html>
